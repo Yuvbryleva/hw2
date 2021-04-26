@@ -6,7 +6,26 @@
   height: 40vmin;
   pointer-events: none;
 }
+.div1 {
+  background: lightseagreen;
+  
+}
+.d1 {
+  text-decoration: underline;
+}
+.Task {
+  background: lightcoral;
+  border-color: black;
+  border-style: solid;
+  margin: 50px;
+  margin-left: 300px;
+  margin-right: 300px;
 
+
+}
+.c1 {
+  background: lightgrey;
+}
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
