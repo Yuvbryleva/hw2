@@ -25,6 +25,7 @@
 }
 .c1 {
   background: lightgrey;
+  margin-top: 10px;
 }
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -54,4 +55,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+.class2 {
+  background:lightgrey;
+  border-color: black;
+  border-style: solid;
+  margin-top: 20px;
 }
