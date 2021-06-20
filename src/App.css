@@ -8,8 +8,11 @@
 }
 .div1 {
   background: lightseagreen;
+  /* display: flex;
+  flex-wrap: wrap; */
   
 }
+
 .d1 {
   text-decoration: underline;
 }
@@ -54,4 +57,10 @@
   to {
     transform: rotate(360deg);
   }
+}
+.class2 {
+  background:lightgrey;
+  border-color: black;
+  border-style: solid;
+  margin-top: 20px;
 }
