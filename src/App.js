@@ -1,45 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
-import React from "react"
+import React from "react";
+import Task from './components/Tasks.js';
 
-
-// const Inner = ({ name, onClick1 }) => {
-//   return (
-//     <div>
-//       <button onClick={onClick1}>{name}</button>
-//     </div>
-//   )
-// }
-
-// const List = () => {
-//   return (
-//     <div>
-//       {this.state.tasks.map(it => <Task id={it.id} name={it.name} description={it.description} completed={it.completed}/>)}
-//     </div>
-//   )
-// }
-
-
-const Task = ({id, name, description, completed}) => {
-  const handleClick = () => {
-    console.log("Task " + id + " completed status = " + completed)
-  }
-  
-  return (
-    <div> 
-       
-      <div class = "Task" align="center">
-      
-        <div class="d1">{name}</div>
-        <div>{description}</div>
-        <div>{completed}</div>
-        <button onClick={handleClick} class="c1">Click to change status</button>
-        
-      </div>
-      <p></p>
-    </div>
-  )
+const MyInput = ({ value, onChange, name, placeholder}) => {
+  return <input value={value} onChange={onChange} name={name} placeholder={placeholder}/>
 }
+
+
+
 
 class MyTodoList extends React.Component {
   state = {
@@ -47,44 +16,89 @@ class MyTodoList extends React.Component {
       id: 1,
       name: 'RPZ',
       description: 'Project work',
-      completed: false
+      completed: 'completed'
     }, {
       id: 2,
       name: 'Ekb',
       description: 'Get ready',
-      completed: false
+      completed: 'not completed'
     },
     {
       id: 3,
       name: 'Personalization in SFA',
       description: 'Requirements',
-      completed: true
+      completed: 'not completed'
     },
     {
       id: 4,
       name: 'Fashdan',
       description: 'Go to the shop',
-      completed: false
+      completed: 'not completed'
     },
     {
       id: 5,
       name: 'Front',
       description: 'HW2 to be done',
-      completed: true
+      completed: 'not completed'
     },
     {
       id: 6,
       name: 'Front',
       description: 'HW3 to be done',
-      completed: false
+      completed: 'not completed'
     },
     {
       id: 7,
       name: 'Front',
       description: 'HW4 to be done',
-      completed: false
+      completed: 'not completed'
     }]
   }
+
+  
+
+  addTask = () => {
+    this.setState(currentState => {
+      const newTasks = [...currentState.tasks,
+        {
+          id: currentState.tasks.length+1,
+          name: this.state.name,
+          description: this.state.description,
+          completed: 'not completed'
+        }]
+      
+    
+    return {
+      tasks: newTasks
+    }
+  })
+  }
+
+  completedChange = (id) => {
+    // this.setState({ message: "Hello I am new message!" })
+    console.log(id)
+    var status_ = "" 
+    if (this.state.tasks[id-1].completed ==="completed")
+    {status_ = "not completed"}
+      else
+      {status_ = "completed"}
+    this.setState((currentState) => {
+      const newArr = [...currentState.tasks]
+      newArr[id-1].completed = status_
+      return {
+        tasks: newArr
+      }
+    }
+
+    )
+  }
+
+  handleChange = (event) => {
+      const { value, name } = event.currentTarget
+    
+      this.setState({ [name]: value})
+      }
+    
 
 
   render() {
@@ -94,109 +108,29 @@ class MyTodoList extends React.Component {
 
     <h1 align="center">My TODO List :)</h1>
 
+    <div> 
+      <p>Новая задача</p>
+      <p>Введите название задачи:</p>
+      <MyInput input placeholder="type here" value={this.state.name} onChange={this.handleChange} name="name"></MyInput>
+
+      <p>Введите описание задачи:</p>
+      <MyInput value={this.state.description} placeholder="type here" onChange={this.handleChange} name="description"></MyInput>
+      <div>
+      <button onClick={this.addTask} class="class2">Cоздать</button>
+      </div>
+
+
+    </div>
     </header>
-      {this.state.tasks.map(it => <Task id={it.id} name={it.name} description={it.description} completed={it.completed}/>)}
+    
+      {this.state.tasks.map(it => <Task id={it.id} name={it.name} description={it.description} completed={it.completed} onClick={() => {this.completedChange(it.id)}}/>)}
     </div>
   </div>)
   }  
 }
 
-// const Inner = ({ name, counter }) => {
-//   return (
-//     <div>
-//       <button onClick={counter}>{name}</button>
-//     </div>
-//   )
-// }
-
-// class Counter extends React.Component {
-//   state = {
-//     count: 0,
-//   }
-
-//   ChangeStateCount = () => {
-//     this.setState(state => {
-//       return {
-//         count: state.count +1
-//       }
-//     })
-//   }
-
-//   render(){
-    // return (<div>
-    //   <div>
-    //     {this.state.count}
-    //     <Inner name="Click me" counter={this.ChangeStateCount}/>
-    //   </div>
-    // </div>)
-
-//   }
-// }
-
-// class Outer extends React.Component {
-//   state = {
-//     message: 'test',
-//   }
-
-//   changeStateMessage = () => {
-//     this.setState({ message: "Hello i am new message"})
-//   }
-
-//   render() {
-//     return (<div>
-//       <div>
-//         <Inner name = "Click ME" onClick1={this.changeStateMessage}/>
-//         {this.state.message}
-//       </div>
-//     </div>
-//     )
-//   }
-// }
-
-// const Inner = ({ name1, mark }) => {
-//   const greeting = 'Hello ' + name1 + mark
-
-//   return <div>{greeting}</div>
-// }
-
-// const Outer = () => {
-//   return (
-//     <div>
-//       <div>
-//         This is my first func component!
-//       </div>
-//       <Inner name1="Valera" mark="!"/>
-//     </div>
-//   ) 
-// }
-
 const App = () => {
   return <MyTodoList />
 }
-
-
-
-
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
 
 export default App;
