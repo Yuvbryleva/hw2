@@ -1,75 +1,53 @@
 import logo from './logo.svg';
-import './App.css';
+import styles from './App.module.scss';
 import React from "react";
 import Task from './components/Tasks.js';
+import Project from './components/Projects.js';
+import {BrowserRouter,  Switch, Route, Link, Redirect, withRouter } from 'react-router-dom';
+import Project_Tasks from './components/Project_tasks.js';
+import classnames from "classnames/bind"
+import { DEFAULT_THEME, ThemeContext } from "../src/components/Context"
+import {MyInput} from './components/Import.js'
 
-const MyInput = ({ value, onChange, name, placeholder}) => {
-  return <input value={value} onChange={onChange} name={name} placeholder={placeholder}/>
-}
+const cx = classnames.bind(styles)
+
+
+
+
+
 
 
 
 
 class MyTodoList extends React.Component {
-  state = {
-    tasks: [{
-      id: 1,
-      name: 'RPZ',
-      description: 'Project work',
-      completed: 'completed'
-    }, {
-      id: 2,
-      name: 'Ekb',
-      description: 'Get ready',
-      completed: 'not completed'
-    },
-    {
-      id: 3,
-      name: 'Personalization in SFA',
-      description: 'Requirements',
-      completed: 'not completed'
-    },
-    {
-      id: 4,
-      name: 'Fashdan',
-      description: 'Go to the shop',
-      completed: 'not completed'
-    },
-    {
-      id: 5,
-      name: 'Front',
-      description: 'HW2 to be done',
-      completed: 'not completed'
-    },
-    {
-      id: 6,
-      name: 'Front',
-      description: 'HW3 to be done',
-      completed: 'not completed'
-    },
-    {
-      id: 7,
-      name: 'Front',
-      description: 'HW4 to be done',
-      completed: 'not completed'
-    }]
-  }
-
   
 
-  addTask = () => {
+state = normState(arr.projects)
+
+handleThemeChange = event => {
+  this.setState({ theme: event.target.value})
+}
+
+
+
+
+  addProject = () => {
+
     this.setState(currentState => {
-      const newTasks = [...currentState.tasks,
-        {
-          id: currentState.tasks.length+1,
-          name: this.state.name,
-          description: this.state.description,
-          completed: 'not completed'
-        }]
       
-    
+      var id = Math.max.apply(Math, Object.values(this.state.projectsByID).map(it => {return it.id})) +1;
+
+      var newObj = {
+        [id]: {
+        name: this.state.project_name,
+      id: id,
+      tasksIds: []
+        }
+      };
+      var newProject = {...currentState.projectsByID, ...newObj}
+
     return {
-      tasks: newTasks
+      projectsByID: newProject
     }
   })
   }
@@ -93,44 +71,176 @@ class MyTodoList extends React.Component {
     )
   }
 
+  
   handleChange = (event) => {
       const { value, name } = event.currentTarget
     
-      this.setState({ [name]: value})
+      this.setState({ project_name: value})
       }
-    
-
 
   render() {
-  return (<div>
-    <div class="div1"> 
-    <header class="header1">
+  return (
 
-    <h1 align="center">My TODO List :)</h1>
+  <div>
+    <div > 
+    <header >
+
+    <h1 className={cx("h1", `h1-theme-${this.context}`)} align="center">My TODO List :)</h1>
 
     <div> 
-      <p>Новая задача</p>
-      <p>Введите название задачи:</p>
-      <MyInput input placeholder="type here" value={this.state.name} onChange={this.handleChange} name="name"></MyInput>
+      <p className={cx("p", `p-theme-${this.context}`)}>Новый проект</p>
+      <p className={cx("p", `p-theme-${this.context}`)}>Введите название проекта:</p>
+      <input className={cx("input", `input-theme-${this.context}`)} input placeholder="type here" value={this.state.project_name} onChange={this.handleChange} name="name"></input>
 
-      <p>Введите описание задачи:</p>
-      <MyInput value={this.state.description} placeholder="type here" onChange={this.handleChange} name="description"></MyInput>
+      
       <div>
-      <button onClick={this.addTask} class="class2">Cоздать</button>
+      <button className={cx("button", `button-theme-${this.context}`)} onClick={this.addProject} >Cоздать</button>
       </div>
 
 
     </div>
     </header>
-    
-      {this.state.tasks.map(it => <Task id={it.id} name={it.name} description={it.description} completed={it.completed} onClick={() => {this.completedChange(it.id)}}/>)}
+
+    <div className={cx("div", `div-theme-${this.context}`)}>
+    {Object.values(this.state.projectsByID).map(it => <Project className={cx("project")}  id={it.id} name={it.name} to={"/projects/" + it.id } tasksIds={it.tasksIds} projects={this.state.projectsByID} tasks={this.state.tasksById}  />)}
     </div>
-  </div>)
+    </div>
+  </div>
+  
+
+  )
   }  
 }
 
-const App = () => {
-  return <MyTodoList />
+
+const arr = {
+  projects: [{
+    id: 1234,
+    name: 'HSE',
+    tasks: [{
+      id: 1,
+      name: 'RPZ',
+      description: 'Project work',
+      completed: 'completed'
+    }, {
+      id: 2,
+      name: 'Ekb',
+      description: 'Get ready',
+      completed: 'not completed'
+    }]},
+
+    {id: 1235,
+      name: 'Work',
+      tasks: [{
+        id: 3,
+        name: 'Personalization in SFA',
+        description: 'Requirements',
+        completed: 'not completed'
+      },
+      {
+        id: 4,
+        name: 'Fashdan',
+        description: 'Go to the shop',
+        completed: 'not completed'
+      }]
+    }      
+]  
+}
+
+const normalize = (arr) => {
+  return arr.reduce((acc, it) => {
+    const {id} = it
+    acc[id] = {name: it.name, id: it.id, tasksIds: it.tasks.map( a => a.id)}
+    return acc
+  }, {}
+  )
+}
+
+const norm2 = (projects) => {
+  const tasksbyid = {};
+  projects.forEach(element => {
+      element.tasks.map (t => {tasksbyid[t.id] = t})
+  });
+  return tasksbyid;
+}
+
+
+const normState = (projects) => {
+return {projectsByID : normalize(projects), tasksById: norm2(projects)}
+} 
+
+
+
+class App extends React.Component {
+
+  state = {
+    theme: DEFAULT_THEME,
+  }
+
+  handleThemeChange = event => {
+    this.setState({ theme: event.target.value })
+  }
+  
+    render() {
+    return (
+      
+
+
+
+
+
+
+      
+
+    <BrowserRouter>
+    <div className={cx("container", `container-theme-${this.state.theme}`)}>
+    <ThemeContext.Provider value={this.state.theme}>
+    <MyTodoList ></MyTodoList>
+
+    {/* <Switch>
+    <Route exact path="/" component={MyTodoList}></Route>
+    <Route path="/projects/:projectId" component={Project_Tasks}></Route>
+    <Route path="/projects/:projectId" component={Project_Tasks}></Route> */}
+    <Redirect to='/'></Redirect>
+    {/* </Switch> */}
+        <div className={cx("radios")}>
+          <div>
+            <input
+              type="radio"
+              name="theme"
+              id="light"
+              value="light"
+              checked={this.state.theme === "light"}
+              onChange={this.handleThemeChange}
+            />
+            <label className={cx("label1")} htmlFor="light">Light theme</label>
+          </div>
+          <div>
+            <input
+              type="radio"
+              name="theme"
+              id="dark"
+              value="dark"
+              checked={this.state.theme === "dark"}
+              onChange={this.handleThemeChange}
+            />
+            <label className={cx("label2")} htmlFor="dark">Dark theme</label>
+          </div>
+        </div>
+        
+          
+        </ThemeContext.Provider>
+      </div>
+
+  <div>
+    
+  </div>
+
+
+    </BrowserRouter>
+    )
+
+    }
 }
 
 export default App;
